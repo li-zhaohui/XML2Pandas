@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2011 sp1 (http://www.altova.com) von tbroesam (IAV GmbH) bearbeitet -->
+<!--W3C Schema erstellt mit XMLSpy v2011 sp1 (http://www.altova.com)-->
+<xsd:schema xmlns="sop.iav.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="sop.iav.com">
+	<xsd:element name="NetworkData">
+		<xsd:annotation>
+			<xsd:documentation>root of the network data</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="sceneID" type="xsd:string" use="optional"/>
+			<xsd:attribute name="dateOfCreation" type="xsd:dateTime" use="required"/>
+			<xsd:attribute name="createdBySceneSuiteVersion" type="xsd:string" use="required"/>
+			<xsd:attribute name="timeResolution" type="xsd:double" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="T_Frame">
+		<xsd:choice>
+			<xsd:element ref="DynamicPoint"/>
+			<xsd:sequence>
+				<xsd:element ref="SensedObject" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SpecIcon" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:sequence>
+				<xsd:element ref="CAMessages"/>
+				<xsd:element ref="DENMessages"/>
+			</xsd:sequence>
+		</xsd:choice>
+		<xsd:attribute name="time" type="xsd:decimal" use="required"/>
+		<xsd:attribute name="objectID" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="mov\..+"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="mountedSensorID" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="mns\..+"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="T_DeterminableValue">
+		<xsd:sequence>
+			<xsd:element ref="Coordinates"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="T_Coordinates">
+		<xsd:attribute name="coordinateSystem" use="optional" default="relative">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="relative"/>
+					<xsd:enumeration value="absolute"/>
+					<xsd:enumeration value="sensor"/>
+					<xsd:enumeration value="relativeToEgoAbs"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<!--Possible Frame Types, must extend T_Frame-->
+	<xsd:complexType name="SimpleSensorFrame">
+		<xsd:complexContent>
+			<xsd:extension base="T_Frame"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ObjectListSensorFrame">
+		<xsd:complexContent>
+			<xsd:extension base="T_Frame"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="WLANSensorFrame">
+		<xsd:annotation>
+			<xsd:documentation>Frame for the WLAN Sensor added with Car2X</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="T_Frame"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!--Possible Coordinate Types, must extend T_Coordinates-->
+	<xsd:complexType name="Scalar">
+		<xsd:complexContent>
+			<xsd:extension base="T_Coordinates">
+				<xsd:attribute name="value" type="xsd:double" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="StringCoordinate">
+		<xsd:complexContent>
+			<xsd:extension base="T_Coordinates">
+				<xsd:attribute name="value" type="xsd:string"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Polar">
+		<xsd:complexContent>
+			<xsd:extension base="T_Coordinates">
+				<xsd:attribute name="r" type="xsd:double"/>
+				<xsd:attribute name="phi" type="xsd:double"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Cartesian">
+		<xsd:complexContent>
+			<xsd:extension base="T_Coordinates">
+				<xsd:attribute name="x" type="xsd:double"/>
+				<xsd:attribute name="y" type="xsd:double"/>
+				<xsd:attribute name="z" type="xsd:double"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!--Possible Determinable Values, must extend T_DeterminableValue-->
+	<xsd:complexType name="Pos">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Accel">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="RadialVelocity">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="YawRate">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Veloc">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AngleX">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AngleY">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AngleZ">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="Tilt">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue"/>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="FunctionValue">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue">
+				<xsd:attribute name="name" type="xsd:string" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="StringCommand">
+		<xsd:complexContent>
+			<xsd:extension base="T_DeterminableValue">
+				<xsd:attribute name="name" type="xsd:string" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!--Car2X-->
+	<xsd:element name="CAMessages">
+		<xsd:annotation>
+			<xsd:documentation>Messages sent by CAM</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="CAM" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CAM">
+		<xsd:annotation>
+			<xsd:documentation>CAMessage</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="VerticalAccelerationValue" type="xsd:double" use="required"/>
+			<xsd:attribute name="causeCode" type="xsd:string" use="optional"/>
+			<xsd:attribute name="exteriorLights" use="optional" default="lowBeamHeadlightsOn">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="lowBeamHeadlightsOn"/>
+						<xsd:enumeration value="highBeamHeadlightsOn"/>
+						<xsd:enumeration value="leftTurnSignalOn"/>
+						<xsd:enumeration value="rightTurnSignalOn"/>
+						<xsd:enumeration value="daytimeRunningLightsOn"/>
+						<xsd:enumeration value="reverseLightOn"/>
+						<xsd:enumeration value="fogLightOn"/>
+						<xsd:enumeration value="parkingLightsOn"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="heading" type="xsd:double" use="required"/>
+			<xsd:attribute name="lightBarActivate" type="xsd:boolean" use="optional" default="false"/>
+			<xsd:attribute name="sirenActivated" type="xsd:boolean" use="optional" default="false"/>
+			<xsd:attribute name="messageId" type="xsd:string" use="required"/>
+			<xsd:attribute name="posX" type="xsd:double" use="required"/>
+			<xsd:attribute name="posY" type="xsd:double" use="required"/>
+			<xsd:attribute name="senderID" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="mov\..+"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="speed" type="xsd:double" use="required"/>
+			<xsd:attribute name="stationType" use="optional" default="unknown">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="unknown"/>
+						<xsd:enumeration value="pedestrian"/>
+						<xsd:enumeration value="cyclist"/>
+						<xsd:enumeration value="moped"/>
+						<xsd:enumeration value="motorcycle"/>
+						<xsd:enumeration value="passengerCar"/>
+						<xsd:enumeration value="bus"/>
+						<xsd:enumeration value="lightTruck"/>
+						<xsd:enumeration value="heavyTruck"/>
+						<xsd:enumeration value="trailer"/>
+						<xsd:enumeration value="specialVehicles"/>
+						<xsd:enumeration value="tram"/>
+						<xsd:enumeration value="roadSideUnit"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="subCauseCode" type="xsd:string" use="optional"/>
+			<xsd:attribute name="timeStamp" type="xsd:double" use="required"/>
+			<xsd:attribute name="vehicleLength" type="xsd:int" use="required"/>
+			<xsd:attribute name="vehicleRole" use="optional" default="default">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="default"/>
+						<xsd:enumeration value="publicTransport"/>
+						<xsd:enumeration value="specialTransport"/>
+						<xsd:enumeration value="dangerousGoods"/>
+						<xsd:enumeration value="roadWork"/>
+						<xsd:enumeration value="rescue"/>
+						<xsd:enumeration value="emergency"/>
+						<xsd:enumeration value="safetyCar"/>
+						<xsd:enumeration value="agriculture"/>
+						<xsd:enumeration value="commercial"/>
+						<xsd:enumeration value="military"/>
+						<xsd:enumeration value="roadOperator"/>
+						<xsd:enumeration value="taxi"/>
+						<xsd:enumeration value="reserved1"/>
+						<xsd:enumeration value="reserved2"/>
+						<xsd:enumeration value="reserved3"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="vehicleWidth" type="xsd:int" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DENMessages">
+		<xsd:annotation>
+			<xsd:documentation>Messages sent by DENM</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="DENM" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DENM">
+		<xsd:annotation>
+			<xsd:documentation>DENMassage</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="causeCode" type="xsd:string" use="optional"/>
+			<xsd:attribute name="currentHopCount" type="xsd:int" use="required"/>
+			<xsd:attribute name="eventPosX" type="xsd:double" use="required"/>
+			<xsd:attribute name="eventPosY" type="xsd:double" use="required"/>
+			<xsd:attribute name="eventSpeed" type="xsd:double" use="required"/>
+			<xsd:attribute name="maxHops" type="xsd:int" use="required"/>
+			<xsd:attribute name="messageId" type="xsd:string" use="required"/>
+			<xsd:attribute name="originationITS" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="mov\..+"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="senderID" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="mov\..+"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="stationType" use="optional" default="unknown">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="unknown"/>
+						<xsd:enumeration value="pedestrian"/>
+						<xsd:enumeration value="cyclist"/>
+						<xsd:enumeration value="moped"/>
+						<xsd:enumeration value="motorcycle"/>
+						<xsd:enumeration value="passengerCar"/>
+						<xsd:enumeration value="bus"/>
+						<xsd:enumeration value="lightTruck"/>
+						<xsd:enumeration value="heavyTruck"/>
+						<xsd:enumeration value="trailer"/>
+						<xsd:enumeration value="specialVehicles"/>
+						<xsd:enumeration value="tram"/>
+						<xsd:enumeration value="roadSideUnit"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="subCauseCode" type="xsd:string" use="optional"/>
+			<xsd:attribute name="timeStamp" type="xsd:double" use="required"/>
+			<xsd:attribute name="timeToLife" type="xsd:double" use="required"/>
+			<xsd:attribute name="vehicleMass" type="xsd:int" use="required"/>
+			<xsd:attribute name="startPoint" type="xsd:double" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<!--ObjectListSensor-->
+	<xsd:element name="SensedObject">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ReferencePoint"/>
+				<xsd:element ref="Polygon" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="type" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Other"/>
+						<xsd:enumeration value="FreeForm"/>
+						<xsd:enumeration value="Marking"/>
+						<xsd:enumeration value="Vehicle"/>
+						<xsd:enumeration value="Bicycle"/>
+						<xsd:enumeration value="Pedestrian"/>
+						<xsd:enumeration value="TownEntry"/>
+						<xsd:enumeration value="TownExit"/>
+						<xsd:enumeration value="StreetLamp"/>
+						<xsd:enumeration value="TunnelEntry"/>
+						<xsd:enumeration value="TunnelExit"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="trackId" type="xsd:int" use="required"/>
+			<xsd:attribute name="movementId" type="xsd:string" use="required"/>
+			<xsd:attribute name="color" type="xsd:string" use="optional"/>
+			<xsd:attribute name="class" type="xsd:string" use="optional"/>
+			<xsd:attribute name="regulation" type="xsd:string" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="SpecIcon">
+		<xsd:complexType>
+			<xsd:attribute name="order" type="xsd:byte" use="required"/>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+			<xsd:attribute name="connect" type="xsd:boolean" use="required"/>
+			<xsd:attribute name="activity" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="active"/>
+						<xsd:enumeration value="available"/>
+						<xsd:enumeration value="idle"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<!--SimpleSensor-->
+	<xsd:complexType name="T_DynamicPoint">
+		<xsd:sequence>
+			<xsd:element ref="DeterminableValue" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="T_Vertex">
+		<xsd:complexContent>
+			<xsd:extension base="T_DynamicPoint">
+				<xsd:attribute name="end_lane" type="xsd:boolean" use="optional"/>
+				<xsd:attribute name="prev_id" type="xsd:int"/>
+				<xsd:attribute name="id" type="xsd:int" use="required"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="ReferencePoint" type="T_DynamicPoint"/>
+	<xsd:element name="Vertex" type="T_Vertex"/>
+	<xsd:element name="Polygon">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Vertex" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!--Elements needed for referencing, instances of their corresponding T_-Types-->
+	<xsd:element name="Frame" type="T_Frame"/>
+	<xsd:element name="DeterminableValue" type="T_DeterminableValue"/>
+	<xsd:element name="Coordinates" type="T_Coordinates"/>
+	<xsd:element name="DynamicPoint" type="T_DynamicPoint"/>
+</xsd:schema>
